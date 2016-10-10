@@ -1,0 +1,45 @@
+doctype
+html
+ head
+     meta(charset='UTF-8')
+
+     title 搜电影;
+extends ../wechat
+block content
+   body
+     h1 点击标题,开始录音翻译;
+     p#title
+     #poster
+
+     script.
+        wx.config({
+        debug:false,
+        appId:'wxb8df959670143619',
+        timestamp:'#{ timestamp }',
+        nonceStr:'#{ noncestr }',
+        signature:'#{ signature }',
+        jsApiList:['startRecord','stopRecord','onVoiceRecordEnd','translateVoice']
+        })
+        wx.ready(function(){
+        wx.checkJsApi({
+        jsApiList: ['onVoiceRecordEnd'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+        success: function(res) {
+        console.log(res)
+        // 以键值对的形式返回，可用的api值true，不可用为false
+        // 如：{"checkResult":{"chooseImage":true},"errMsg":"checkJsApi:ok"}
+        }
+        });
+
+        var isRecording = false;
+        $('h1').on('tap',function(){
+        if(!isRecording){
+        wx.startRecord({
+        cancel:function(){
+        window.alert('那就搜不了了哦！')
+        }
+        });
+        return
+        }
+        isRecording = false;
+        })
+        })
