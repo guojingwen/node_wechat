@@ -1,62 +1,52 @@
 var mongoose = require('mongoose')
-var Schema = mongoose.Schema
-var ObjectId = Schema.Types.ObjectId
-
-var MovieSchema = new Schema({
-  director: String,
-  title: String,
-  doubanId:String,
-  language: String,
-  country: String,
-  summary: String,
-  flash: String,
-  poster: String,
-  year: Number,
-  geners:[String],
-  pv: {
-    type: Number,
-    default: 0
-  },
-  category: {
-    type: ObjectId,
-    ref: 'Category'
-  },
-  meta: {
-    createAt: {
-      type: Date,
-      default: Date.now()
-    },
-    updateAt: {
-      type: Date,
-      default: Date.now()
-    }
-  }
+var Schema = mongoose.Schema ; 
+var ObjectId = Schema.Types.ObjectId ; 
+var movieSchema = new mongoose.Schema({
+	title: String ,
+	director: String , 
+	doubanId: String ,
+	language: String , 
+	country: String , 
+	summary: String , 
+	flash: String , 
+	poster: String , 
+	year: Number , 
+	genres: [String] ,
+	pv: {type: Number , default: 0} , 
+	category: {type: ObjectId , ref: 'Category'} ,
+	meta:{
+		createAt: {
+			type: Date , 
+			default: Date.now()
+		} , 
+		updateAt: {
+			type: Date , 
+			default: Date.now()
+		}
+	} 
 })
 
-// var ObjectId = mongoose.Schema.Types.ObjectId
-MovieSchema.pre('save', function(next) {
-  if (this.isNew) {
-    this.meta.createAt = this.meta.updateAt = Date.now()
-  }
-  else {
-    this.meta.updateAt = Date.now()
-  }
-
-  next()
+movieSchema.pre('save' , function(next){
+	if(this.isNew){
+		this.meta.createAt = this.meta.updateAt = Date.now()
+	}else{
+		this.meta.updateAt = Date.now()
+	}
+	next()    //这样才能将存储流程走下去
 })
 
-MovieSchema.statics = {
-  fetch: function(cb) {
-    return this
-      .find({})
-      .sort('meta.updateAt')
-      .exec(cb)
-  },
-  findById: function(id, cb) {
-    return this
-      .findOne({_id: id})
-      .exec(cb)
-  }
+movieSchema.statics = {
+	fetch: function(cb){
+		return this
+			.find({})
+			.sort('meta.updateAt')
+			.exec(cb)
+	},
+	findById: function(id , cb){
+		return this
+			.findOne({_id:id})
+			.exec(cb)
+	}
 }
 
-module.exports = MovieSchema
+module.exports = movieSchema

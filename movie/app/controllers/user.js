@@ -1,114 +1,102 @@
-var mongoose = require('mongoose')
-var User = mongoose.model('User')
-
-// signup
-exports.showSignup = function(req, res) {
-  res.render('signup', {
-    title: '注册页面'
-  })
+'use strict'
+var mongoose = require('mongoose') ; 
+var User = mongoose.model('User') ;
+//user signup
+exports.signup = function *(next){
+	var _user = this.request.body.user ; 
+	yield user = User.find({name: _user.name}).exec() ; 
+	//console.log(user) ;
+	if(user.name){
+		//如果说已经注册过的话，直接跳转到登录
+		this.redirect('/login') ;
+		return next ; 
+	}else{
+		var user = new User(_user) ; 
+		yield user.save() ;
+		this.session.user = user ;
+		this.redirect('/') ; 
+	}
 }
 
-exports.showSignin = function(req, res) {
-  res.render('signin', {
-    title: '登录页面'
-  })
+
+//user login
+exports.login = function *(next){
+	//console.log('i am coming') ;
+	var _user = this.request.body.user ; 
+	var username = _user.name ; 
+	var userpassword = _user.password ;
+	var user = yield User.findOne({name:username}).exec() ; 
+	if(!user){
+		//如果说没有找到，返回注册界面
+		this.redirect('/signup') ; 
+	}
+	var isMatched = yield user.comparePassword(userpassword , user.password) ; 
+	//console.log(isMatched) ;
+	if(isMatched){
+		this.session.user = user ; 
+		console.log('password is matched') ;
+		this.redirect('/') ;
+	}else{
+		this.redirect('/signup') ;
+		console.log('password is not matched') ;
+	}
+
 }
 
-exports.signup = function(req, res) {
-  var _user = req.body.user
-
-  User.findOne({name: _user.name},  function(err, user) {
-    if (err) {
-      console.log(err)
-    }
-
-    if (user) {
-      return res.redirect('/signin')
-    }
-    else {
-      user = new User(_user)
-      user.save(function(err, user) {
-        if (err) {
-          console.log(err)
-        }
-
-        res.redirect('/')
-      })
-    }
-  })
+//user logout
+exports.logout = function *(next){
+	delete this.session.user ; 
+	this.redirect('/')
+	//delete app.locals.usthis.redirect('pages/') ;
 }
 
-// signin
-exports.signin = function(req, res) {
-  var _user = req.body.user
-  var name = _user.name
-  var password = _user.password
-
-  User.findOne({name: name}, function(err, user) {
-    if (err) {
-      console.log(err)
-    }
-
-    if (!user) {
-      return res.redirect('/signup')
-    }
-
-    user.comparePassword(password, function(err, isMatch) {
-      if (err) {
-        console.log(err)
-      }
-
-      if (isMatch) {
-        req.session.user = user
-
-        return res.redirect('/')
-      }
-      else {
-        return res.redirect('/signin')
-      }
-    })
-  })
+//admin user list
+exports.list = function *(next){
+	var users = yield User
+		.find({})
+		.sort('meta.updateAt')
+		.exec() ;
+	this.render('userlist' , {
+		title:'Movie 用户列表页面' , 
+		users:users
+	})
 }
 
-// logout
-exports.logout =  function(req, res) {
-  delete req.session.user
-  //delete app.locals.user
-
-  res.redirect('/')
+//user showlogin
+exports.showLogin = function *(next){
+	this.render('pages/login' , {
+		title: '用户登陆页面'
+	})
 }
 
-// userlist page
-exports.list = function(req, res) {
-  User.fetch(function(err, users) {
-    if (err) {
-      console.log(err)
-    }
-
-    res.render('userlist', {
-      title: 'imooc 用户列表页',
-      users: users
-    })
-  })
+//user showlogin
+exports.showSignup = function *(next){
+	this.render('pages/signup' , {
+		title: '用户注册页面'
+	})
 }
 
-// midware for user
-exports.signinRequired = function(req, res, next) {
-  var user = req.session.user
-
-  if (!user) {
-    return res.redirect('/signin')
-  }
-
-  next()
+//middleware for user
+exports.loginRequired = function *(next){
+	var user = this.session.user ; 
+	if(!user){
+		this.redirect('/login') ; 
+	}
+	else {
+		yield next 
+	}
+	
 }
 
-exports.adminRequired = function(req, res, next) {
-  var user = req.session.user
+exports.adminRequired = function *(next){
+	var user = this.session.user ; 
 
-  if (user.role <= 10) {
-    return res.redirect('/signin')
-  }
-
-  next()
+	if(user.role <= 10){
+		this.redirect('/login') ; 
+	}
+	else {
+		yield next ; 
+	}
+	
 }
+

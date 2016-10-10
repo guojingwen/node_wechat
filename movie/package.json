@@ -1,36 +1,48 @@
 {
-  "name": "wechat-movie",
+  "name": "wechat_movie",
   "version": "1.0.0",
-  "description": "",
+  "description": "a wechat project for movie search",
   "main": "app.js",
   "dependencies": {
-    "connect-mongo": "^1.3.2",
-    "jade": "^1.11.0",
-    "koa": "^1.2.4",
-    "koa-jade": "^2.1.0",
-    "koa-render": "^0.2.1",
-    "koa-request": "^1.0.0",
-    "koa-views": "^4.1.0",
-    "sha1": "^1.1.1",
-    "underscore": "^1.8.3"
-  },
-  "devDependencies": {
-    "bcryptjs": "^2.3.0",
-    "bluebird": "^3.4.6",
-    "crypto": "0.0.3",
-    "ejs": "^2.5.2",
+    "bcrypt": "^0.8.7",
+    "bluebird": "^3.4.1",
+    "co": "^4.6.0",
+    "ejs": "^2.5.1",
     "heredoc": "^1.3.1",
+    "jade": "^1.11.0",
+    "koa": "^1.2.1",
+    "koa-body": "^1.4.0",
+    "koa-bodyparser": "^2.2.0",
+    "koa-request": "^1.0.0",
     "koa-router": "^5.4.0",
-    "lodash": "^4.16.3",
-    "mongoose": "^4.6.2",
+    "koa-session": "^3.3.1",
+    "koa-views": "^4.1.0",
+    "lodash": "^4.14.1",
+    "moment": "^2.14.1",
+    "mongoose": "^4.5.8",
     "raw-body": "^2.1.7",
-    "request": "^2.75.0",
+    "request": "^2.74.0",
     "sha1": "^1.1.1",
     "xml2js": "^0.4.17"
   },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "movie",
+    "node.js",
+    "mongoose",
+    "koa"
+  ],
+  "author": "xiaoyuervae",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xiaoyuervae/weixin-movie/issues"
+  },
+  "homepage": "https://github.com/xiaoyuervae/weixin-movie#readme"
 }

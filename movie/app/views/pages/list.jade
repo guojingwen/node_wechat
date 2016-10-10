@@ -19,7 +19,9 @@ block content
         tbody
           each item in movies
             tr(class="item-id-#{item._id}")
-              td #{item.category.name}
+              td
+                if item.category
+                  | #{item.category.name}
               td #{item.title}
               td #{item.doctor}
               td #{item.country}
@@ -30,4 +32,23 @@ block content
               td: a(target="_blank", href="/admin/movie/update/#{item._id}") 修改
               td
                 button.btn.btn-danger.del(type="button", data-id="#{item._id}") 删除
-  script(src="/js/admin.js")
+  script.
+    $(function() {
+      $('.del').click(function(e) {
+        var target = $(e.target)
+        var id = target.data('id')
+        var tr = $('.item-id-' + id)
+
+        $.ajax({
+          type: 'DELETE',
+          url: '/admin/movie/list?id=' + id
+        })
+        .done(function(results) {
+          if (results.success === 1) {
+            if (tr.length > 0) {
+              tr.remove()
+            }
+          }
+        })
+      })
+    })
